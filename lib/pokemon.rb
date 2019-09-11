@@ -1,30 +1,29 @@
 class Pokemon
 
-attr_accessor :name, :type, :db
-attr_reader :id
+  attr_accessor :id,:name,:type,:db
 
-def initialize(id: nil, name:, type:, db:)
-  @id = id
-  @name = name
-  @type = type
-  @db = db
-end
+  def initialize(id:nil,name:,type:,db:)
+    @id = id
+    @name = name
+    @type = type
+    @db = db
+  end
 
-def self.save(name_in,type_in,db_in)
- sql = <<-SQL
- INSERT INTO pokemon (name,type)
- VALUES (?,?)
- SQL
- db_in.execute(sql, name_in, type_in)
-end
+  def self.save(name,type,db)
+    sql = <<-SQL
+      INSERT INTO pokemon (name,type)
+      VALUES (?,?)
+      SQL
+    db.execute(sql,name,type)
+  end
 
-def self.find(id_in,db_in)
-  sql =  <<-SQL
-  SELECT * FROM pokemon
-  WHERE id = ?
-  SQL
-  array = db_in.execute(sql,id_in)
-  Pokemon.new(id: array[0][0],name: array[0][1],type: array[0][2],db: db_in)
-end
+  def self.find(id,db)
+    sql = <<-SQL
+      SELECT *
+      FROM pokemon
+      WHERE id = ?
+      SQL
+    db.execute(sql,id).map {|row| self.new(id:row[0],name:row[1],type:row[2],db:db)}.first
+  end
 
 end
